@@ -1,16 +1,22 @@
 import path from "path";
+import fs from "fs";
+import JSONStream from "JSONStream";
 import { Request, Response } from "express";
+
 import posts from "../../data/posts.json";
 import comments from "../../data/comments.json";
 
-const fs = require("fs"),
-  JSONStream = require("JSONStream");
+import { IVote, IPost, IComment } from "./index.interface";
 
-let jsonParsed = false;
-let allVotesById: any = {};
-let allPosts: any = [];
-let allComments: any = {};
-let commentsByPostId: any = {};
+let jsonParsed: boolean = false;
+let allVotesById: {
+  [key: string]: number;
+} = {};
+let allPosts: IPost[] = [];
+let allComments: IComment[] = [];
+let commentsByPostId: {
+  [key: string]: IComment[];
+} = {};
 
 export default class PostController {
   static processVotes() {
@@ -31,16 +37,22 @@ export default class PostController {
     parser.on("end", (voteObj: any) => {
       console.log("parsing end.....");
       if (!(allPosts && allPosts.length > 0)) {
-        allPosts = posts.map((p) => ({
-          ...p,
-          votes: allVotesById[p.uuid],
-        }));
+        allPosts = posts.map(
+          (p: IPost) =>
+            <IPost>{
+              ...p,
+              votes: allVotesById[p.uuid],
+            }
+        );
       }
       if (!(allComments && allComments.length > 0)) {
-        allComments = comments.map((c) => ({
-          ...c,
-          votes: allVotesById[c.uuid],
-        }));
+        allComments = comments.map(
+          (c: IComment) =>
+            <IComment>{
+              ...c,
+              votes: allVotesById[c.uuid],
+            }
+        );
       }
       jsonParsed = true;
     });
@@ -63,22 +75,22 @@ export default class PostController {
       });
       return;
     }
-    const sortedPost = allPosts.sort((a, b) => b.votes - a.votes);
+    const sortedPost = allPosts.sort((a, b) => b.votes! - a.votes!);
 
     res.status(200).json(
-      sortedPost.slice(0, 10).map((p) => {
+      sortedPost.slice(0, 10).map((p: IPost) => {
         if (!commentsByPostId[p.uuid]) {
-          commentsByPostId[p.uuid] = comments.filter(
-            (c) => c["post-uuid"] === p.uuid
+          commentsByPostId[p.uuid] = <IComment[]>(
+            comments.filter((c) => c["post-uuid"] === p.uuid)
           );
         }
 
-        const mappedComments = commentsByPostId[p.uuid]
-          .map((c) => ({
+        const mappedComments: IComment[] = commentsByPostId[p.uuid]
+          .map((c: IComment) => ({
             ...c,
             votes: allVotesById[c.uuid],
           }))
-          .sort((a, b) => b.votes - a.votes);
+          .sort((a: IComment, b: IComment) => b.votes! - a.votes!);
 
         return {
           ...p,
@@ -99,7 +111,7 @@ export default class PostController {
     const postObj = allPosts.find((p) => p.uuid === req.params.id);
     if (postObj) {
       const remainingPosts = allPosts.filter((p) => p.uuid !== req.params.id);
-      allPosts = [...remainingPosts, { ...postObj, votes: postObj.votes + 1 }];
+      allPosts = [...remainingPosts, { ...postObj, votes: postObj.votes! + 1 }];
       return res.status(200).json("post votes incremented successfully.");
     } else {
       const commentObj = allComments.find((c) => c.uuid === req.params.id);
@@ -109,7 +121,7 @@ export default class PostController {
         );
         allComments = [
           ...remainingComments,
-          { ...commentObj, votes: commentObj.votes + 1 },
+          { ...commentObj, votes: commentObj.votes! + 1 },
         ];
         return res.status(200).json("comment votes incremented successfully.");
       }
@@ -132,7 +144,7 @@ export default class PostController {
       const remainingPosts = allPosts.filter((p) => p.uuid !== req.params.id);
       allPosts = [
         ...remainingPosts,
-        { ...postObj, votes: postObj.votes > 0 ? postObj.votes - 1 : 0 },
+        { ...postObj, votes: postObj.votes! > 0 ? postObj.votes! - 1 : 0 },
       ];
       return res.status(200).json("post votes decremented successfully.");
     } else {
@@ -145,10 +157,10 @@ export default class PostController {
           ...remainingComments,
           {
             ...commentObj,
-            votes: commentObj.votes > 0 ? commentObj.votes - 1 : 0,
+            votes: commentObj.votes! > 0 ? commentObj.votes! - 1 : 0,
           },
         ];
-        
+
         delete commentsByPostId[commentObj["post-uuid"]];
 
         return res.status(200).json("comments votes decremented successfully.");
