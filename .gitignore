@@ -68,3 +68,5 @@ dist/
 
 # json data folder
 data/
+
+client/node_modules

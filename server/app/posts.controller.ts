@@ -81,20 +81,17 @@ export default class PostController {
       sortedPost.slice(0, 10).map((p: IPost) => {
         if (!commentsByPostId[p.uuid]) {
           commentsByPostId[p.uuid] = <IComment[]>(
-            comments.filter((c) => c["post-uuid"] === p.uuid)
+            allComments.filter((c) => c["post-uuid"] === p.uuid)
           );
         }
 
-        const mappedComments: IComment[] = commentsByPostId[p.uuid]
-          .map((c: IComment) => ({
-            ...c,
-            votes: allVotesById[c.uuid],
-          }))
-          .sort((a: IComment, b: IComment) => b.votes! - a.votes!);
+        const mappedComments: IComment[] = [...commentsByPostId[p.uuid]].sort(
+          (a: IComment, b: IComment) => b.votes! - a.votes!
+        );
 
         return {
           ...p,
-          comments: mappedComments.splice(0, 3),
+          comments: mappedComments.slice(0, 3),
         };
       })
     );
@@ -117,12 +114,13 @@ export default class PostController {
       const commentObj = allComments.find((c) => c.uuid === req.params.id);
       if (commentObj) {
         const remainingComments = allComments.filter(
-          (p) => p.uuid !== req.params.id
+          (c) => c.uuid !== req.params.id
         );
         allComments = [
           ...remainingComments,
           { ...commentObj, votes: commentObj.votes! + 1 },
         ];
+        delete commentsByPostId[commentObj["post-uuid"]];
         return res.status(200).json("comment votes incremented successfully.");
       }
 
@@ -151,7 +149,7 @@ export default class PostController {
       const commentObj = allComments.find((c) => c.uuid === req.params.id);
       if (commentObj) {
         const remainingComments = allComments.filter(
-          (p) => p.uuid !== req.params.id
+          (c) => c.uuid !== req.params.id
         );
         allComments = [
           ...remainingComments,

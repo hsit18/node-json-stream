@@ -1,0 +1,26 @@
+html,
+body,
+#root {
+  width: 100%;
+  height: 100%;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: inherit;
+}
+
+h1, h2, h3, body, p {
+  margin: 0;
+}
+
+body {
+  scroll-behavior: smooth;
+  text-rendering: optimizeSpeed;
+  color: #333333;
+  font-family: Noto Sans, sans-serif;
+  font-size: 0.875rem;
+  font-weight: normal;
+  background-color: #eaeaea;
+}
