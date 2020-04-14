@@ -1,6 +1,6 @@
 import express from "express";
 import bodyParser from "body-parser";
-import PostController from "./posts.controller";
+import { processVotes } from "./posts";
 import { Routes } from "./routes";
 
 const allowCrossDomain = function (req, res, next) {
@@ -16,7 +16,7 @@ class App {
 
   constructor() {
     this.config();
-    PostController.processVotes();
+    processVotes();
     this.routePrv.routes(this.app);
   }
 

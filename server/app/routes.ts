@@ -1,8 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 
-import PostController from "./posts.controller";
+import {getTopPosts, upVotesHandler, downVotesHandler} from './posts';
 export class Routes {
-  public postCtrl: PostController = new PostController();
 
   public routes(app: any): void {
     app.route("/").get((req: Request, res: Response) => {
@@ -11,10 +10,10 @@ export class Routes {
       });
     });
 
-    app.route("/top").get(this.postCtrl.getTopPosts);
+    app.route("/top").get(getTopPosts);
 
-    app.route("/upvote/:id").post(this.postCtrl.upVotesHandler);
+    app.route("/upvote/:id").post(upVotesHandler);
 
-    app.route("/downvote/:id").post(this.postCtrl.downVotesHandler);
+    app.route("/downvote/:id").post(downVotesHandler);
   }
 }
