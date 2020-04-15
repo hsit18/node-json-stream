@@ -101,7 +101,7 @@ export const upVotesHandler = (req: Request, res: Response) => {
     return voteObj.votes + 1;
   });
   console.log(req.params.id, status);
-  
+
   if (status) {
     return res.status(200).json("votes incremented successfully.");
   }
