@@ -19,3 +19,7 @@
 1. `GET` http://localhost:3001/top
 2. `POST` http://localhost:3001/upvote/{:id}
 3. `POST` http://localhost:3001/downvote/{:id}
+
+## test cases implemented for backend API
+1. start the backend server one of the terminal at http://localhost:3001
+2. npm run test. Test all 3 API endpoint with current json data.
