@@ -13,7 +13,7 @@ export interface IPost {
 
 export interface IComment {
   uuid: string;
-  "post-uuid": string;
+  'post-uuid': string;
   content: string;
   author: string;
   votes?: number;

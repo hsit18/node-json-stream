@@ -1,20 +1,20 @@
-import path from "path";
-import fs from "fs";
-import JSONStream from "JSONStream";
-import { Request, Response } from "express";
+import path from 'path';
+import fs from 'fs';
+import JSONStream from 'JSONStream';
+import { Request, Response } from 'express';
 
-import posts from "../../data/posts.json";
-import comments from "../../data/comments.json";
+import posts from '../../data/posts.json';
+import comments from '../../data/comments.json';
 
-import { IVote, IPost, IComment } from "./index.interface";
+import { IVote, IPost, IComment } from './index.interface';
 
-let jsonParsed: boolean = false;
+let jsonParsed = false;
 let allVotesById: {
   [key: string]: number;
 } = {};
 let allPosts: IPost[] = [];
 let allComments: IComment[] = [];
-let commentsByPostId: {
+const commentsByPostId: {
   [key: string]: IComment[];
 } = {};
 
@@ -25,36 +25,31 @@ export const processVotes = () => {
   allVotesById = {};
   jsonParsed = false;
   const stream = fs.createReadStream(
-      path.join(__dirname, "../../../data/votes.json"),
-      { encoding: "utf8" }
-    ),
-    parser = JSONStream.parse("*");
+      path.join(__dirname, '../../../data/votes.json'),
+      { encoding: 'utf8' }
+    );
+
+  const parser = JSONStream.parse('*');
 
   stream.pipe(parser);
 
-  parser.on("data", (voteObj: IVote) => {
+  parser.on('data', (voteObj: IVote) => {
     addVotesById(voteObj);
   });
 
-  parser.on("end", () => {
-    console.log("parsing end.....");
+  parser.on('end', (): void => {
+    console.log('parsing end.....');
     if (!(allPosts && allPosts.length > 0)) {
-      allPosts = posts.map(
-        (p: IPost) =>
-          <IPost>{
-            ...p,
-            votes: allVotesById[p.uuid],
-          }
-      );
+      allPosts = posts.map((p: IPost) => ({
+        ...p,
+        votes: allVotesById[p.uuid],
+      }));
     }
     if (!(allComments && allComments.length > 0)) {
-      allComments = comments.map(
-        (c: IComment) =>
-          <IComment>{
-            ...c,
-            votes: allVotesById[c.uuid],
-          }
-      );
+      allComments = comments.map((c: IComment) => ({
+        ...c,
+        votes: allVotesById[c.uuid],
+      }));
     }
     jsonParsed = true;
   });
@@ -72,9 +67,9 @@ export const getTopPosts = (req: Request, res: Response): void => {
   res.status(200).json(
     sortedPost.slice(0, 10).map((p: IPost) => {
       if (!commentsByPostId[p.uuid]) {
-        commentsByPostId[p.uuid] = <IComment[]>(
-          allComments.filter((c) => c["post-uuid"] === p.uuid)
-        );
+        commentsByPostId[p.uuid] = ((
+          allComments.filter((c) => c['post-uuid'] === p.uuid)
+        ) as IComment[]);
       }
 
       const mappedComments: IComment[] = [...commentsByPostId[p.uuid]].sort(
@@ -103,9 +98,9 @@ export const upVotesHandler = (req: Request, res: Response) => {
   console.log(req.params.id, status);
 
   if (status) {
-    return res.status(200).json("votes incremented successfully.");
+    return res.status(200).json('votes incremented successfully.');
   }
-  return res.status(400).json("unknown uuid");
+  return res.status(400).json('unknown uuid');
 };
 
 /*
@@ -119,9 +114,9 @@ export const downVotesHandler = (req: Request, res: Response) => {
     return voteObj.votes > 0 ? voteObj.votes - 1 : 0;
   });
   if (status) {
-    return res.status(200).json("votes decremented successfully.");
+    return res.status(200).json('votes decremented successfully.');
   }
-  return res.status(400).json("unknown uuid");
+  return res.status(400).json('unknown uuid');
 };
 
 const updatesVotes = (voteId: string, getVote: any) => {
@@ -138,7 +133,7 @@ const updatesVotes = (voteId: string, getVote: any) => {
         ...remainingComments,
         { ...commentObj, votes: getVote(commentObj) },
       ];
-      delete commentsByPostId[commentObj["post-uuid"]];
+      delete commentsByPostId[commentObj['post-uuid']];
       return true;
     }
 
@@ -159,7 +154,7 @@ const checkJsonParsed = (req: Request, res: Response) => {
   if (!jsonParsed) {
     res.status(200).json({
       status: false,
-      message: "please wait while parsing...",
+      message: 'please wait while parsing...',
     });
     return false;
   }

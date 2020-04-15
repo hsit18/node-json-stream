@@ -1,12 +1,12 @@
-import express from "express";
-import bodyParser from "body-parser";
-import { processVotes } from "./posts";
-import { Routes } from "./routes";
+import express, { Request, Response, NextFunction } from 'express';
+import bodyParser from 'body-parser';
+import { processVotes } from './posts';
+import { Routes } from './routes';
 
-const allowCrossDomain = function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
-  res.header("Access-Control-Allow-Methods", "GET,PUT,POST,DELETE");
-  res.header("Access-Control-Allow-Headers", "Content-Type, authorization");
+const allowCrossDomain = (req: Request, res: Response, next: NextFunction) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  res.header('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.header('Access-Control-Allow-Headers', 'Content-Type, authorization');
   next();
 };
 
@@ -21,12 +21,12 @@ class App {
   }
 
   private config(): void {
-    this.app.set("port", process.env.PORT || 3001);
+    this.app.set('port', process.env.PORT || 3001);
 
     this.app.use(bodyParser.json());
     this.app.use(allowCrossDomain);
     this.app.use(bodyParser.urlencoded({ extended: false }));
-    this.app.use(express.static("public"));
+    this.app.use(express.static('public'));
   }
 }
 

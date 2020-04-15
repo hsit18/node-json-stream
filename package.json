@@ -6,7 +6,7 @@
     "build:server": "tsc --project './tsconfig.json'",
     "start:server": "NODE_ENV=development nodemon --watch dist dist/server/index.js",
     "dev:server": "tsc --project './tsconfig.json' --watch & NODE_ENV=development nodemon --watch dist dist/server/index.js",
-    "lint": "tslint --init"
+    "lint": "tslint --project './tsconfig.json'"
   },
   "author": "Harpreet Singh",
   "license": "ISC",
