@@ -1,3 +1,13 @@
+# Eyeota UI Coding Project
+
+## The challenge
+The objective is to build a single interactive page to display a list of top 10 voted `Posts` and their associated `Comments`.
+
+![Sample](./example.png)
+
+Rough example of what your page may look like.
+
+## Requirements
 UI:
 - Each `Post` and `Comment` should have upvote and downvote buttons.
 - We should be able to click the upvote and downvote buttons repeatedly to affect the votes.
@@ -5,7 +15,7 @@ UI:
 - You should display at least `author`, `content` and `vote count` for every `Post` and `Comment`.
 
 Backend:
--  3 endpoints:
+- You will need to create 3 endpoints:
     - `GET` /top
         - Your endpoint should return the top **10** `Posts` sorted by their number of upvotes (don't include `Comment` upvotes when calculating upvotes for `Posts`).
         - Each `Post` being returned should also contain their top **3** highest upvoted `Comments`.
@@ -61,7 +71,6 @@ Backend:
     - posts.json
     - comments.json
     - upvotes.json
-    https://drive.google.com/open?id=1cMh2y1lhKPMUJRAN-MeJJT-etjXgGZX_
 
 ## Rules
 - You may use any JS framework e.g. Ember.js, React, Angular or no framework at all.
