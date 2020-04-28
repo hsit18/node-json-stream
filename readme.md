@@ -1,6 +1,6 @@
 ## Application folder details
 1. Complete UI is in client folder
-2. Keep json files in data folder on root.
+2. Keep json files in data folder on root. (Download from https://drive.google.com/open?id=1cMh2y1lhKPMUJRAN-MeJJT-etjXgGZX)
 
 ## For Server Setup, run below commands on application root
 1. npm install
